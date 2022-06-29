@@ -20,7 +20,7 @@ Have you found yourself relying on “data exhaust” — data from arbitrary to
 
 | [Snowplow Open Source](https://snowplowanalytics.com/snowplow-open-source/?utm_source=github&utm_content=landing-page)  | [Snowplow Behavioral Data Platform](https://snowplowanalytics.com/snowplow-bdp/?utm_source=github&utm_content=landing-page) |
 | ------------- | ------------- |
-| Our Open Source solution equips you with everything you need to start creating behavioral data in a high-fidelity, machine-readable way. Head over to the [Quick Start Guide](https://docs.snowplowanalytics.com/docs/open-source-quick-start/what-is-the-quick-start-for-open-source/?utm_source=github&utm_content=landing-page) to set things up. | Looking for an enterprise solution with a console, APIs, data governance, workflow tooling? The Behavioral Data Platform is our managed service that runs in **your** AWS or GCP cloud. |
+| Our Open Source solution equips you with everything you need to start creating behavioral data in a high-fidelity, machine-readable way. Head over to the [Quick Start Guide](https://docs.snowplowanalytics.com/docs/open-source-quick-start/what-is-the-quick-start-for-open-source/?utm_source=github&utm_content=landing-page) to set things up. | Looking for an enterprise solution with a console, APIs, data governance, workflow tooling? The Behavioral Data Platform is our managed service that runs in **your** AWS or GCP cloud. Check out [Try Snowplow](https://try.snowplowanalytics.com/?utm_source=github&utm_content=landing-page). |
 
 The [documentation](https://docs.snowplowanalytics.com/?utm_source=github&utm_content=landing-page) is a great place to learn more, especially:
 
