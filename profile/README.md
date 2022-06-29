@@ -27,6 +27,8 @@ The [documentation](https://docs.snowplowanalytics.com/?utm_source=github&utm_co
 * [Tracking design](https://docs.snowplowanalytics.com/docs/understanding-tracking-design/?utm_source=github&utm_content=landing-page) — discover how to approach creating your data the Snowplow way.
 * [Pipelines](https://docs.snowplowanalytics.com/docs/understanding-your-pipeline/?utm_source=github&utm_content=landing-page) — understand what’s under the hood of Snowplow.
 
+Would rather dive into the code? [snowplow/snowplow](https://github.com/snowplow/snowplow) is the main repository where you can find all the modules.
+
 _Watch this space for the upcoming new ways to get started!_
 
 ---
