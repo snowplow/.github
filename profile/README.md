@@ -10,7 +10,7 @@ Have you found yourself relying on “data exhaust” — data from arbitrary to
 
 ### Why Snowplow?
 
-* 🚀 **Battle-tested architecture** capable of processing billions of events per day.
+* 🏔️ **Rock solid architecture** capable of processing billions of events per day.
 * 🛠️ **Over [20 SDKs](https://docs.snowplowanalytics.com/docs/collecting-data/collecting-from-own-applications/?utm_source=github&utm_content=landing-page)** to collect data from web, mobile, server-side, and other sources.
 * ✅ A unique approach based on **[schemas and validation](https://docs.snowplowanalytics.com/docs/understanding-tracking-design/understanding-schemas-and-validation/?utm_source=github&utm_content=landing-page)** ensures your data is as clean as possible.
 * 🪄 **Over [15 enrichments](https://docs.snowplowanalytics.com/docs/enriching-your-data/available-enrichments/?utm_source=github&utm_content=landing-page)** to get the most out of your data.
