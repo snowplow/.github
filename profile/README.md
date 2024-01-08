@@ -1,6 +1,16 @@
 ![Snowplow logo](https://raw.githubusercontent.com/snowplow/snowplow/master/media/snowplow_logo.png)
 
-Hi! Welcome to Snowplow Open Source, the world’s largest developer-first engine for collecting behavioral data.  
+---
+
+As of January 8, 2024,  Snowplow is introducing the Snowplow Limited Use License Agreement, and we will be releasing new versions of our core behavioral data pipeline technology under this license.
+
+Our mission to empower everyone to own their first-party customer behavioral data remains the same. We value all of our users and remain dedicated to helping our community use Snowplow in the optimal capacity that fits their business goals and needs. 
+
+We reflect on our Snowplow origins and provide more information about these changes in our blog post here → https://eu1.hubs.ly/H06QJZw0
+
+---
+
+Hi! Welcome to Snowplow, the world’s largest developer-first engine for collecting behavioral data.  
 
 We are the leader in [Data Creation](https://snowplow.io/what-is-data-creation/?utm_source=github&utm_content=landing-page). Thousands of organizations of all sizes around the world generate, enhance, and model behavioral data with Snowplow to fuel [advanced analytics](https://snowplow.io/advanced-analytics/?utm_source=github&utm_content=landing-page), [AI/ML initiatives](https://snowplow.io/ai-ml/?utm_source=github&utm_content=landing-page), or [composable CDPs](https://snowplow.io/composable-cdp/?utm_source=github&utm_content=landing-page).
 
@@ -18,9 +28,9 @@ Have you found yourself relying on “data exhaust” — data from arbitrary to
 
 ### ➡ Where to start? ⬅️
 
-| [Snowplow Open Source](https://snowplow.io/snowplow-open-source/?utm_source=github&utm_content=landing-page)  | [Snowplow Behavioral Data Platform](https://snowplow.io/snowplow-bdp/?utm_source=github&utm_content=landing-page) |
+| [Snowplow Community Edition](https://snowplow.io/get-started/community-edition-signup/?utm_source=github&utm_content=landing-page)  | [Snowplow Behavioral Data Platform](https://snowplow.io/snowplow-bdp/?utm_source=github&utm_content=landing-page) |
 | ------------- | ------------- |
-| Our Open Source solution equips you with everything you need to start creating behavioral data in a high-fidelity, machine-readable way. Head over to the [Quick Start Guide](https://docs.snowplow.io/docs/open-source-quick-start/what-is-the-quick-start-for-open-source?utm_source=github&utm_content=landing-page) to set things up. | Looking for an enterprise solution with a console, APIs, data governance, workflow tooling? The Behavioral Data Platform is our managed service that runs in **your** AWS or GCP cloud. Check out [Try Snowplow](https://try.snowplowanalytics.com/?utm_source=github&utm_content=landing-page). |
+| Community Edition equips you with everything you need to start creating behavioral data in a high-fidelity, machine-readable way. Head over to the [Quick Start Guide](https://docs.snowplow.io/docs/getting-started-on-community-edition/?utm_source=github&utm_content=landing-page) to set things up. | Looking for an enterprise solution with a console, APIs, data governance, workflow tooling? The Behavioral Data Platform is our managed service that runs in **your** AWS or GCP cloud. Check out [Try Snowplow](https://try.snowplowanalytics.com/?utm_source=github&utm_content=landing-page). |
 
 The [documentation](https://docs.snowplow.io/docs?utm_source=github&utm_content=landing-page) is a great place to learn more, especially:
 
