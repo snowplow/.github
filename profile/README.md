@@ -30,7 +30,7 @@ Have you found yourself relying on “data exhaust” — data from arbitrary to
 
 | [Snowplow Community Edition](https://snowplow.io/get-started/community-edition-signup/?utm_source=github&utm_content=landing-page)  | [Snowplow Behavioral Data Platform](https://snowplow.io/snowplow-bdp/?utm_source=github&utm_content=landing-page) |
 | ------------- | ------------- |
-| Community Edition equips you with everything you need to start creating behavioral data in a high-fidelity, machine-readable way. Head over to the [Quick Start Guide](https://docs.snowplow.io/docs/getting-started-on-community-edition/?utm_source=github&utm_content=landing-page) to set things up. | Looking for an enterprise solution with a console, APIs, data governance, workflow tooling? The Behavioral Data Platform is our managed service that runs in **your** AWS or GCP cloud. Check out [Try Snowplow](https://try.snowplowanalytics.com/?utm_source=github&utm_content=landing-page). |
+| Community Edition equips you with everything you need to start creating behavioral data in a high-fidelity, machine-readable way. Head over to the [Quick Start Guide](https://docs.snowplow.io/docs/getting-started-on-community-edition/?utm_source=github&utm_content=landing-page) to set things up. | Looking for an enterprise solution with a console, APIs, data governance, workflow tooling? The Behavioral Data Platform is our managed service that runs in **your** AWS, Azure or GCP cloud. [Book a demo](https://snowplow.io/get-started/book-a-demo-of-snowplow-bdp/?utm_source=github&utm_content=landing-page). |
 
 The [documentation](https://docs.snowplow.io/docs?utm_source=github&utm_content=landing-page) is a great place to learn more, especially:
 
