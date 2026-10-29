@@ -8,8 +8,9 @@
 #
 # Never prompts Snowplow staff. It skips bots, returning contributors, repo collaborators
 # and members of any Snowplow org. Membership is checked with the snowplow-cla-nudge
-# GitHub App (Organization Members: read), which sees private memberships. If any lookup
-# can't be completed, it stays silent rather than risk prompting a staff member.
+# GitHub App (Organization Members: read), which sees private memberships. If a lookup
+# fails, it still asks and logs a warning, so an outside contributor is never missed and
+# a broken check shows up (staff being asked, plus the daily health check).
 # Private repositories are covered by staff agreements and are skipped.
 # Uses pull_request_target so it can comment on fork PRs. It never checks out PR code.
 
@@ -113,18 +114,19 @@ jobs:
           fi
 
           # Members of any Snowplow org, public or private. 204 = member, 404 = not a member.
-          # Anything else (missing token, API error) means we can't be sure, so stay silent.
+          # Anything else (missing token, API error) is a broken check. Fail open: warn and
+          # still ask, so an outside contributor is never missed and the breakage gets noticed.
           check_org() {
             local org=$1 token=$2 code
             if [ -z "$token" ]; then
-              echo "No membership token for $org, not commenting"
-              exit 0
+              echo "::warning title=CLA nudge membership check failed::No membership token for $org, asking anyway"
+              return
             fi
             code=$(GH_TOKEN="$token" gh api -i "orgs/$org/members/$AUTHOR" 2>/dev/null | head -1 | awk '{print $2}')
             case "$code" in
               204) echo "$AUTHOR is a member of $org, skipping"; exit 0 ;;
               404) ;;
-              *)   echo "Membership lookup for $org returned '${code:-none}', not commenting"; exit 0 ;;
+              *)   echo "::warning title=CLA nudge membership check failed::Membership lookup for $org returned '${code:-none}', asking anyway" ;;
             esac
           }
           check_org snowplow "$TOKEN_SNOWPLOW"
