@@ -34,6 +34,10 @@ jobs:
                github.event.pull_request.author_association)
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      # snowplow-cla-nudge GitHub App (App ID 5525224). A Client ID is a public identifier,
+      # not a secret, so it lives here. The private key stays in CLA_NUDGE_APP_PRIVATE_KEY.
+      CLA_NUDGE_CLIENT_ID: Iv23liqwvpsz8kBTqnfD
     steps:
       # One installation token per Snowplow org: a token only sees its own org's members.
       # continue-on-error so a missing install or secret never fails the required check.
@@ -41,7 +45,7 @@ jobs:
         continue-on-error: true
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          client-id: ${{ env.CLA_NUDGE_CLIENT_ID }}
           private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
           owner: snowplow
           permission-members: read
@@ -50,7 +54,7 @@ jobs:
         continue-on-error: true
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          client-id: ${{ env.CLA_NUDGE_CLIENT_ID }}
           private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
           owner: snowplow-incubator
           permission-members: read
@@ -59,7 +63,7 @@ jobs:
         continue-on-error: true
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          client-id: ${{ env.CLA_NUDGE_CLIENT_ID }}
           private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
           owner: snowplow-product
           permission-members: read
@@ -68,7 +72,7 @@ jobs:
         continue-on-error: true
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          client-id: ${{ env.CLA_NUDGE_CLIENT_ID }}
           private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
           owner: snowplow-devops
           permission-members: read
@@ -77,7 +81,7 @@ jobs:
         continue-on-error: true
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
-          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          client-id: ${{ env.CLA_NUDGE_CLIENT_ID }}
           private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
           owner: snowplow-referer-parser
           permission-members: read
