@@ -7,7 +7,7 @@
 #   - never fails, so it never blocks a merge
 #
 # Skipped for private repositories (covered by staff agreements), bots, org members,
-# returning contributors and PRs with @snowplowanalytics.com commit emails.
+# returning contributors and PRs with @snowplowanalytics.com or @snowplow.io commit emails.
 # Uses pull_request_target so it can comment on fork PRs. It never checks out PR code.
 
 name: CLA nudge
@@ -46,7 +46,7 @@ jobs:
           fi
 
           if gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[].commit.author.email' \
-              | grep -qi '@snowplowanalytics\.com$'; then
+              | grep -qiE '@(snowplowanalytics\.com|snowplow\.io)$'; then
             echo "Commits are from a Snowplow email, skipping"
             exit 0
           fi
