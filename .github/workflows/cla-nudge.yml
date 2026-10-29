@@ -6,8 +6,9 @@
 #     (it looks for its own hidden marker comment, so maintainers can change labels freely)
 #   - never fails, so it never blocks a merge
 #
-# Skipped for private repositories (covered by staff agreements), bots, org members,
-# returning contributors and PRs with @snowplowanalytics.com or @snowplow.io commit emails.
+# Skipped for private repositories (covered by staff agreements), bots, returning contributors,
+# org members and repo collaborators (checked via the API, so private memberships count), and
+# PRs with @snowplowanalytics.com or @snowplow.io commit emails.
 # Uses pull_request_target so it can comment on fork PRs. It never checks out PR code.
 
 name: CLA nudge
@@ -47,6 +48,14 @@ jobs:
             exit 0
           fi
 
+          # Org members, including private memberships that author_association reports as NONE.
+          # Members get base read access, so they show as repo collaborators, as do invited outside collaborators.
+          if gh api "repos/$REPO/collaborators/$AUTHOR" --silent 2>/dev/null; then
+            echo "$AUTHOR is an org member or collaborator, skipping"
+            exit 0
+          fi
+
+          # Backup for staff who are members of a different Snowplow org than this repo's
           if gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[].commit.author.email' \
               | grep -qiE '@(snowplowanalytics\.com|snowplow\.io)$'; then
             echo "Commits are from a Snowplow email, skipping"
