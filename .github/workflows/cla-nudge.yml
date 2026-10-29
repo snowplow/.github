@@ -6,8 +6,11 @@
 #     (it looks for its own hidden marker comment, so maintainers can change labels freely)
 #   - never fails, so it never blocks a merge
 #
-# Skipped for private repositories (covered by staff agreements), bots, org members,
-# returning contributors and PRs with @snowplowanalytics.com or @snowplow.io commit emails.
+# Never prompts Snowplow staff. It skips bots, returning contributors, repo collaborators
+# and members of any Snowplow org. Membership is checked with the snowplow-cla-nudge
+# GitHub App (Organization Members: read), which sees private memberships. If any lookup
+# can't be completed, it stays silent rather than risk prompting a staff member.
+# Private repositories are covered by staff agreements and are skipped.
 # Uses pull_request_target so it can comment on fork PRs. It never checks out PR code.
 
 name: CLA nudge
@@ -32,12 +35,64 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # One installation token per Snowplow org: a token only sees its own org's members.
+      # continue-on-error so a missing install or secret never fails the required check.
+      - id: token-snowplow
+        continue-on-error: true
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
+          owner: snowplow
+          permission-members: read
+
+      - id: token-snowplow-incubator
+        continue-on-error: true
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
+          owner: snowplow-incubator
+          permission-members: read
+
+      - id: token-snowplow-product
+        continue-on-error: true
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
+          owner: snowplow-product
+          permission-members: read
+
+      - id: token-snowplow-devops
+        continue-on-error: true
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
+          owner: snowplow-devops
+          permission-members: read
+
+      - id: token-snowplow-referer-parser
+        continue-on-error: true
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: ${{ secrets.CLA_NUDGE_APP_ID }}
+          private-key: ${{ secrets.CLA_NUDGE_APP_PRIVATE_KEY }}
+          owner: snowplow-referer-parser
+          permission-members: read
+
       - name: Ask for the CLA
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
           AUTHOR: ${{ github.event.pull_request.user.login }}
+          TOKEN_SNOWPLOW: ${{ steps.token-snowplow.outputs.token }}
+          TOKEN_SNOWPLOW_INCUBATOR: ${{ steps.token-snowplow-incubator.outputs.token }}
+          TOKEN_SNOWPLOW_PRODUCT: ${{ steps.token-snowplow-product.outputs.token }}
+          TOKEN_SNOWPLOW_DEVOPS: ${{ steps.token-snowplow-devops.outputs.token }}
+          TOKEN_SNOWPLOW_REFERER_PARSER: ${{ steps.token-snowplow-referer-parser.outputs.token }}
         run: |
           set +e
           MARKER='<!-- cla-nudge -->'
@@ -47,11 +102,32 @@ jobs:
             exit 0
           fi
 
-          if gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[].commit.author.email' \
-              | grep -qiE '@(snowplowanalytics\.com|snowplow\.io)$'; then
-            echo "Commits are from a Snowplow email, skipping"
+          # Repo collaborators, including this org's members through base read access
+          if gh api "repos/$REPO/collaborators/$AUTHOR" --silent 2>/dev/null; then
+            echo "$AUTHOR is a collaborator on $REPO, skipping"
             exit 0
           fi
+
+          # Members of any Snowplow org, public or private. 204 = member, 404 = not a member.
+          # Anything else (missing token, API error) means we can't be sure, so stay silent.
+          check_org() {
+            local org=$1 token=$2 code
+            if [ -z "$token" ]; then
+              echo "No membership token for $org, not commenting"
+              exit 0
+            fi
+            code=$(GH_TOKEN="$token" gh api -i "orgs/$org/members/$AUTHOR" 2>/dev/null | head -1 | awk '{print $2}')
+            case "$code" in
+              204) echo "$AUTHOR is a member of $org, skipping"; exit 0 ;;
+              404) ;;
+              *)   echo "Membership lookup for $org returned '${code:-none}', not commenting"; exit 0 ;;
+            esac
+          }
+          check_org snowplow "$TOKEN_SNOWPLOW"
+          check_org snowplow-incubator "$TOKEN_SNOWPLOW_INCUBATOR"
+          check_org snowplow-product "$TOKEN_SNOWPLOW_PRODUCT"
+          check_org snowplow-devops "$TOKEN_SNOWPLOW_DEVOPS"
+          check_org snowplow-referer-parser "$TOKEN_SNOWPLOW_REFERER_PARSER"
 
           LOGO="https://raw.githubusercontent.com/snowplow/.github/main/assets"
           cat > "$RUNNER_TEMP/cla-comment.md" <<EOF
