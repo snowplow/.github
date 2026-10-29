@@ -3,6 +3,7 @@
 # Run on public repositories by the "cla-nudge" enterprise ruleset.
 # Rulesets ignore event filters and make this a required check, so the job:
 #   - runs on opened, synchronize and reopened, and only comments once per PR
+#     (it looks for its own hidden marker comment, so maintainers can change labels freely)
 #   - never fails, so it never blocks a merge
 #
 # Skipped for private repositories (covered by staff agreements), bots, org members,
@@ -36,10 +37,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
           set +e
+          MARKER='<!-- cla-nudge -->'
 
-          if gh pr view "$PR" -R "$REPO" --json labels --jq '.labels[].name' | grep -qx 'cla:requested'; then
+          if gh api --paginate "repos/$REPO/issues/$PR/comments" --jq '.[].body' | grep -qF "$MARKER"; then
             echo "Already asked on this PR"
             exit 0
           fi
@@ -50,11 +53,29 @@ jobs:
             exit 0
           fi
 
+          LOGO="https://raw.githubusercontent.com/snowplow/.github/main/assets"
+          cat > "$RUNNER_TEMP/cla-comment.md" <<EOF
+          $MARKER
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="$LOGO/snowplow-logo-white.png">
+            <img alt="Snowplow" src="$LOGO/snowplow-logo-navy.png" width="180">
+          </picture>
+
+          ### Thanks for your contribution, @$AUTHOR! 👋
+
+          Before we can review this pull request, we need you to sign the Snowplow Contributor License Agreement (CLA). It only takes a minute, and you only need to do it once.
+
+          - **Contributing for yourself?** Sign the [Individual CLA](https://docs.google.com/forms/d/1J1FNYq9538ndzzcBdlCbxPo1yFiOY4mwalhDTSl1pgg/viewform)
+          - **Contributing for your employer?** Sign the [Corporate CLA](https://docs.google.com/forms/d/1ZUzz7lQJhs7oZqbkBL1bp0r048hAi7uIN6aLWCyZWWs/viewform)
+
+          Once you've signed, reply here (e.g. *"I've signed the CLA"*) and a maintainer will pick up your review.
+
+          <sub>This is an automated message. Find out more about the CLA [here](https://docs.snowplow.io/docs/contributing/contributor-license-agreement/). If you've already signed, you can ignore this.</sub>
+          EOF
+
           gh label create 'cla:requested' -R "$REPO" --color FBCA04 \
             --description 'Asked the contributor to sign the CLA' 2>/dev/null
           gh pr edit "$PR" -R "$REPO" --add-label 'cla:requested'
-          gh pr comment "$PR" -R "$REPO" --body "Thanks for your pull request! Before we can review it, please sign our Contributor License Agreement (CLA): https://docs.snowplowanalytics.com/docs/contributing/contributor-license-agreement/
-
-          Once you've signed, reply here and a maintainer will take a look. If you've already signed, you can ignore this."
+          gh pr comment "$PR" -R "$REPO" --body-file "$RUNNER_TEMP/cla-comment.md"
 
           exit 0
