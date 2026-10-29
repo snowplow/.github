@@ -1,0 +1,61 @@
+# Asks first-time outside contributors to sign the Snowplow CLA.
+#
+# Run on public repositories by the "cla-nudge" enterprise ruleset (ITS-2557),
+# defined in snowplow-devops/platform-services codebase/github/rulesets/enterprise.
+# Rulesets ignore event filters and make this a required check, so the job:
+#   - runs on opened, synchronize and reopened, and only comments once per PR
+#   - never fails, so it never blocks a merge
+#
+# Skipped for private repositories (covered by staff agreements), bots, org members,
+# returning contributors and PRs with @snowplowanalytics.com commit emails.
+# Uses pull_request_target so it can comment on fork PRs. It never checks out PR code.
+
+name: CLA nudge
+
+on:
+  pull_request_target:
+
+permissions:
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: cla-nudge-${{ github.repository }}-${{ github.event.pull_request.number }}
+
+jobs:
+  cla-nudge:
+    if: >-
+      !github.event.repository.private &&
+      !endsWith(github.event.pull_request.user.login, '[bot]') &&
+      contains(fromJSON('["FIRST_TIME_CONTRIBUTOR","FIRST_TIMER","NONE"]'),
+               github.event.pull_request.author_association)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ask for the CLA
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set +e
+
+          if gh pr view "$PR" -R "$REPO" --json labels --jq '.labels[].name' | grep -qx 'cla:requested'; then
+            echo "Already asked on this PR"
+            exit 0
+          fi
+
+          if gh api --paginate "repos/$REPO/pulls/$PR/commits" --jq '.[].commit.author.email' \
+              | grep -qi '@snowplowanalytics\.com$'; then
+            echo "Commits are from a Snowplow email, skipping"
+            exit 0
+          fi
+
+          gh label create 'cla:requested' -R "$REPO" --color FBCA04 \
+            --description 'Asked the contributor to sign the CLA' 2>/dev/null
+          gh pr edit "$PR" -R "$REPO" --add-label 'cla:requested'
+          gh pr comment "$PR" -R "$REPO" --body "Thanks for your pull request! Before we can review it, please sign our Contributor License Agreement (CLA): https://docs.snowplowanalytics.com/docs/contributing/contributor-license-agreement/
+
+          Once you've signed, reply here and a maintainer will take a look. If you've already signed, you can ignore this."
+
+          exit 0
