@@ -1,7 +1,6 @@
 # Asks first-time outside contributors to sign the Snowplow CLA.
 #
-# Run on public repositories by the "cla-nudge" enterprise ruleset (ITS-2557),
-# defined in snowplow-devops/platform-services codebase/github/rulesets/enterprise.
+# Run on public repositories by the "cla-nudge" enterprise ruleset.
 # Rulesets ignore event filters and make this a required check, so the job:
 #   - runs on opened, synchronize and reopened, and only comments once per PR
 #   - never fails, so it never blocks a merge
